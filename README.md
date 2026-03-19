@@ -14,6 +14,8 @@ cp .env.sample .env.development
 ```
 
 Then, fill all environment variables in .env.development file with expected value.
+##### Note:
+* SEED_ADMIN_PHONE: phone number of admin account, length of 10. 
 
 #### 2. Create database
 Using MySQL CLI or something that you can create database with database name as you defined in .env.development file
