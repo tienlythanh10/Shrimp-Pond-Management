@@ -17,9 +17,9 @@ async function seedUser(params: {
   lastName: string;
   role: UserRole;
 }) {
-      const userRepo = dataSource.getRepository(User);
+  const userRepo = dataSource.getRepository(User);
 
-        const existing = await userRepo.findOne({
+  const existing = await userRepo.findOne({
     where: { email: params.email },
   });
 
@@ -37,15 +37,14 @@ async function seedUser(params: {
 
   await transaction.startTransaction();
 
-
-    try {
+  try {
     const user = userRepo.create({
       email: params.email,
       password: passwordHash,
       role: params.role,
-        'firstName': params.firstName,
-        "lastName": params.lastName,
-        "phoneNumber": params.phone
+      firstName: params.firstName,
+      lastName: params.lastName,
+      phoneNumber: params.phone,
     });
 
     await userRepo.save(user);
@@ -60,21 +59,38 @@ async function seedUser(params: {
   console.log(`Created ${params.role}: ${params.email}`);
 }
 
-async function seedDeviceCategory (){
-  const deviceCategories = ['Cảm biến nhiệt độ', "Cảm biến mực nước", "Máy bơm", "Mái che", "Đèn chiếu sáng"]
+async function seedDeviceCategory() {
+  const deviceCategories = [
+    'Cảm biến nhiệt độ',
+    'Cảm biến mực nước',
+    'Máy bơm',
+    'Mái che',
+    'Đèn chiếu sáng',
+  ];
+  const deviceCategoriesId = [
+    'fb56861c-1da9-418e-8cb3-d47413faa4f4',
+    'a9f0423a-7907-49b4-81f9-7dfe843d973d',
+    '29da8aa1-861f-4e32-a2db-49d576e4c330',
+    '505012ec-9b51-4f9a-b546-9883c65eef13',
+    '2aa562b2-b17a-451d-9bfd-029de8102fe2',
+  ];
   const deviceCategoryRepo = dataSource.getRepository(DeviceCategory);
-  
-  for (let category of deviceCategories) {
+
+  for (let i = 0; i < deviceCategories.length; i++) {
+    const category = deviceCategories[i];
+    const categoryId = deviceCategoriesId[i];
+
     const isExist = await deviceCategoryRepo.findOne({
       where: {
-        name: category
-      }
-    })
+        name: category,
+      },
+    });
 
     if (isExist == null) {
       const newCategory = deviceCategoryRepo.create({
-        "name": category
-      })
+        name: category,
+        id: categoryId,
+      });
       await deviceCategoryRepo.save(newCategory);
     }
   }
@@ -103,7 +119,7 @@ async function bootstrap() {
       role: UserRole.ADMIN,
     });
 
-    await seedDeviceCategory()
+    await seedDeviceCategory();
 
     console.log('Seed completed');
   } finally {

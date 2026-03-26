@@ -1,17 +1,17 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitDb1773934471469 implements MigrationInterface {
-    name = 'InitDb1773934471469'
+export class AddCreatedAtToControlHistoryTable1774447303038 implements MigrationInterface {
+    name = 'AddCreatedAtToControlHistoryTable1774447303038'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE \`tokens\` (\`id\` varchar(36) NOT NULL, \`token\` varchar(255) NOT NULL, \`created_at\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`expired_at\` timestamp NOT NULL, \`is_revoked\` tinyint NOT NULL DEFAULT 0, \`used_at\` timestamp NULL, \`user_id\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`users\` (\`id\` varchar(36) NOT NULL, \`email\` varchar(255) NOT NULL, \`password\` varchar(255) NOT NULL, \`first_name\` varchar(255) NOT NULL, \`last_name\` varchar(255) NOT NULL, \`phone_number\` varchar(10) NOT NULL, \`role\` enum ('admin', 'user') NOT NULL DEFAULT 'user', \`created_at\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, UNIQUE INDEX \`IDX_97672ac88f789774dd47f7c8be\` (\`email\`), UNIQUE INDEX \`IDX_17d1817f241f10a3dbafb169fd\` (\`phone_number\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`tokens\` (\`id\` varchar(36) NOT NULL, \`token\` varchar(255) NOT NULL, \`created_at\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`expired_at\` timestamp NOT NULL, \`is_revoked\` tinyint NOT NULL DEFAULT 0, \`used_at\` timestamp NULL, \`user_id\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`device_categories\` (\`id\` varchar(36) NOT NULL, \`name\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`ponds\` (\`id\` varchar(36) NOT NULL, \`name\` varchar(255) NOT NULL, \`description\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`sensor_data\` (\`id\` varchar(36) NOT NULL, \`value\` float NOT NULL, \`created_at\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`sensor_id\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`device_schedules\` (\`id\` varchar(36) NOT NULL, \`start_at\` int NOT NULL, \`duration_second\` int NOT NULL, \`day_of_week\` enum ('0', '1', '2', '3', '4', '5', '6') NOT NULL, \`device_id\` varchar(255) NOT NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`logs\` (\`id\` varchar(36) NOT NULL, \`created_at\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`is_read\` tinyint NOT NULL DEFAULT 0, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
-        await queryRunner.query(`CREATE TABLE \`control_histories\` (\`id\` varchar(36) NOT NULL, \`mode\` enum ('on', 'off') NOT NULL, \`device_id\` varchar(255) NOT NULL, \`log_id\` varchar(255) NOT NULL, UNIQUE INDEX \`REL_67bbebefce9f5f5e828f58a3fb\` (\`log_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
+        await queryRunner.query(`CREATE TABLE \`control_histories\` (\`id\` varchar(36) NOT NULL, \`mode\` enum ('on', 'off') NOT NULL, \`created_at\` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, \`device_id\` varchar(255) NOT NULL, \`log_id\` varchar(255) NOT NULL, UNIQUE INDEX \`REL_67bbebefce9f5f5e828f58a3fb\` (\`log_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`threshold_alerts\` (\`id\` varchar(36) NOT NULL, \`value\` float NOT NULL, \`threshold_type\` enum ('minimum-reach', 'maximum-reach') NOT NULL, \`device_id\` varchar(255) NOT NULL, \`log_id\` varchar(255) NOT NULL, UNIQUE INDEX \`REL_c2814b3f332c2c5d8b6375f5c9\` (\`log_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`devices\` (\`id\` varchar(36) NOT NULL, \`name\` varchar(255) NOT NULL, \`description\` varchar(255) NOT NULL, \`feed_name\` varchar(255) NOT NULL, \`type\` enum ('sensor-device', 'control-device') NOT NULL, \`status\` enum ('on', 'off') NULL, \`category_id\` varchar(255) NOT NULL, \`pond_id\` varchar(255) NOT NULL, UNIQUE INDEX \`REL_2893c2e4730ccce6f050a958cf\` (\`category_id\`), PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
         await queryRunner.query(`CREATE TABLE \`threshold_schedules\` (\`id\` varchar(36) NOT NULL, \`device_on_duration_second\` int NOT NULL, \`safe_range_minimum\` float NOT NULL, \`safe_range_maximum\` float NOT NULL, \`control_device_id\` varchar(255) NOT NULL, \`sensor_device_id\` varchar(255) NOT NULL, \`control_device-id\` varchar(36) NULL, PRIMARY KEY (\`id\`)) ENGINE=InnoDB`);
@@ -52,10 +52,10 @@ export class InitDb1773934471469 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE \`sensor_data\``);
         await queryRunner.query(`DROP TABLE \`ponds\``);
         await queryRunner.query(`DROP TABLE \`device_categories\``);
+        await queryRunner.query(`DROP TABLE \`tokens\``);
         await queryRunner.query(`DROP INDEX \`IDX_17d1817f241f10a3dbafb169fd\` ON \`users\``);
         await queryRunner.query(`DROP INDEX \`IDX_97672ac88f789774dd47f7c8be\` ON \`users\``);
         await queryRunner.query(`DROP TABLE \`users\``);
-        await queryRunner.query(`DROP TABLE \`tokens\``);
     }
 
 }
